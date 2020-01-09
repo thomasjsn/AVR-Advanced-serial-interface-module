@@ -1,6 +1,6 @@
 Report       : asim
 Date         : 01-09-2020
-Time         : 22:29:37
+Time         : 22:39:02
 
 Compiler     : BASCOM-AVR LIBRARY V 2.0.7.8
 Processor    : M8
@@ -8,9 +8,9 @@ SRAM         : 400 hex
 EEPROM       : 200 hex
 ROMSIZE      : 2000 hex
 
-ROMIMAGE     : F26 hex  -> Will fit into ROM
-ROMIMAGE     :  3878 dec
-FLASH USED   :  47  %
+ROMIMAGE     : EEA hex  -> Will fit into ROM
+ROMIMAGE     :  3818 dec
+FLASH USED   :  46  %
 BAUD         : 9600 Baud
 XTAL         : 8000000 Hz
 BAUD error   : 0.16%
@@ -21,7 +21,7 @@ S-Stacksize  : 10 hex
 S-Stackstart : 438 hex
 Framesize    : 20 hex
 Framestart   : 408 hex
-Space left   :  861  dec
+Space left   :  837  dec
 
 LCD DB7      : PORTB.7
 LCD DB6      : PORTB.6
@@ -111,6 +111,12 @@ INPUT_UT                         String * 2        00A3          163
 INPUT_STAT                       String * 1        00A6          166 
 B                                Byte              00A8          168 
 LED                              Byte              00A9          169 
+W1S                              String * 3        00AA          170 
+W2S                              String * 3        00AE          174 
+W3S                              String * 3        00B2          178 
+W4S                              String * 3        00B6          182 
+W5S                              String * 3        00BA          186 
+W6S                              String * 3        00BE          190 
 
 --------------------------------------------------------------------------------
 Constant                         Value
@@ -545,3 +551,15 @@ COMPARE1                         not used
 PWM1B                            not used
 
 Source string could be too big to fit into target string [___TEMP1>A2]  in line  0 
+Source string could be too big to fit into target string [___TEMP2>W1S]  in line  0 
+Source string could be too big to fit into target string [___TEMP3>W1S]  in line  0 
+Source string could be too big to fit into target string [___TEMP4>W2S]  in line  0 
+Source string could be too big to fit into target string [___TEMP5>W2S]  in line  0 
+Source string could be too big to fit into target string [___TEMP6>W3S]  in line  0 
+Source string could be too big to fit into target string [___TEMP7>W3S]  in line  0 
+Source string could be too big to fit into target string [___TEMP8>W4S]  in line  0 
+Source string could be too big to fit into target string [___TEMP9>W4S]  in line  0 
+Source string could be too big to fit into target string [___TEMP10>W5S]  in line  0 
+Source string could be too big to fit into target string [___TEMP11>W5S]  in line  0 
+Source string could be too big to fit into target string [___TEMP12>W6S]  in line  0 
+Source string could be too big to fit into target string [___TEMP13>W6S]  in line  0 

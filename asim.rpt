@@ -1,6 +1,6 @@
 Report       : asim
 Date         : 01-09-2020
-Time         : 22:45:51
+Time         : 22:52:37
 
 Compiler     : BASCOM-AVR LIBRARY V 2.0.7.8
 Processor    : M8
@@ -8,9 +8,9 @@ SRAM         : 400 hex
 EEPROM       : 200 hex
 ROMSIZE      : 2000 hex
 
-ROMIMAGE     : CF4 hex  -> Will fit into ROM
-ROMIMAGE     :  3316 dec
-FLASH USED   :  40  %
+ROMIMAGE     : CBA hex  -> Will fit into ROM
+ROMIMAGE     :  3258 dec
+FLASH USED   :  39  %
 BAUD         : 38400 Baud
 XTAL         : 8000000 Hz
 BAUD error   : 0.16%
@@ -21,7 +21,7 @@ S-Stacksize  : 10 hex
 S-Stackstart : 438 hex
 Framesize    : 20 hex
 Framestart   : 408 hex
-Space left   :  887  dec
+Space left   :  846  dec
 
 LCD DB7      : PORTB.7
 LCD DB6      : PORTB.6
@@ -90,21 +90,23 @@ COMPARE1                         Word              004A          74
 PWM1B                            Word              0048          72 
 COMPARE1B                        Word              0048          72 
 ERR                              Bit [2]           0006          6 
-SEND                             String * 11       0060          96 
+SEND                             String * 30       0060          96 
 STORED_ID                        EEPROM Byte       0000          0 
-SERIALCHARWAITING                Byte              006C          108 
-SERIALCHAR                       Byte              006D          109 
-COMMINPUT                        String * 9        006E          110 
-COM_VALUE                        Word              0078          120 
-COM_COM                          String * 1        007A          122 
-COM_NR                           String * 1        007C          124 
-LED                              Byte              007E          126 
-COM_STAT                         String * 4        007F          127 
-STATUS                           Byte              0084          132 
-VALUE                            Word              0085          133 
-VALUES                           String * 4        0087          135 
-ID                               Byte              008C          140 
-IDS                              String * 2        008D          141 
+SERIALCHARWAITING                Byte              007F          127 
+SERIALCHAR                       Byte              0080          128 
+COMMINPUT                        String * 9        0081          129 
+COM_VALUE                        Word              008B          139 
+COM_COM                          String * 1        008D          141 
+COM_NR                           String * 1        008F          143 
+LED                              Byte              0091          145 
+COM_STAT                         String * 4        0092          146 
+STATUS                           Byte              0097          151 
+VALUE                            Word              0098          152 
+VALUES                           String * 4        009A          154 
+ID                               Byte              009F          159 
+IDS                              String * 2        00A0          160 
+CRC                              Byte              00A3          163 
+VERINFO                          String * 20       00A4          164 
 
 --------------------------------------------------------------------------------
 Constant                         Value
@@ -473,15 +475,18 @@ _HWSTACK_LOW                     &H0437
 _SWSTACK_LOW                     &H0428
 _FRAME_HIGH                      &H0429
 _XMEGA                           0
+_VERSION_MAJOR                   2
+_VERSION_MINOR                   1
+_VERSION_BUILD                   14
 MIN_ID                           32
 MAX_ID                           125
 PWM_MAX                          255
 OUT_MAX                          511
 STAT_MAX                         7
-STATUS_SERIAL                    "006A"
-STATUS_VERBOOT                   "0064"
-STATUS_VERFIRM                   "00C8"
-STATUS_VERPROT                   "00C8"
+STATUS_SERIAL                    "106"
+STATUS_NAME                      "ASIM"
+STATUS_VERBOOT                   "1.0.0"
+STATUS_VERPROT                   "2.1.1"
 STATUS_DIO                       "0209"
 STATUS_AI                        "060A"
 STATUS_AO                        "0000"
@@ -549,12 +554,4 @@ ADCD                             not used
 COMPARE1                         not used
 PWM1B                            not used
 
-Source string could be too big to fit into target string [VALUES>___STRBUF]  in line  0 
-Source string could be too big to fit into target string [VALUES>___STRBUF]  in line  0 
-Source string could be too big to fit into target string [VALUES>___STRBUF]  in line  0 
-Source string could be too big to fit into target string [VALUES>___STRBUF]  in line  0 
-Source string could be too big to fit into target string [VALUES>___STRBUF]  in line  0 
-Source string could be too big to fit into target string [VALUES>___STRBUF]  in line  0 
-Source string could be too big to fit into target string [VALUES>___STRBUF]  in line  0 
-Source string could be too big to fit into target string [VALUES>___STRBUF]  in line  0 
-Source string could be too big to fit into target string [VALUES>___STRBUF]  in line  0 
+Source string could be too big to fit into target string [SEND>___STRBUF]  in line  0 

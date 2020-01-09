@@ -1,10 +1,10 @@
 '--------------------------------------------------------------
 '                   Thomas Jensen | stdout.no
 '--------------------------------------------------------------
-'  file: AVR_ASIM_v.2.0   0xC8
-'  date: 16/09/2011
-'  prot: 2.00             0xC8
-'  sn# : 106              0x6A
+'  file: AVR_ASIM_v.2.1
+'  date: 20/09/2011
+'  prot: 2.10
+'  sn# : 106
 '--------------------------------------------------------------
 $regfile = "m8def.dat"
 $crystal = 8000000
@@ -18,16 +18,21 @@ Config Portd.6 = Input
 Config Portd.7 = Input
 Config Watchdog = 128
 
+$version 2 , 1 , 14
+
 'serial
 'PD0: Rx
 'PD1: Tx
 
-Dim Send As String * 11 , Stored_id As Eram Byte
+Dim Send As String * 30 , Stored_id As Eram Byte
 Dim Serialcharwaiting As Byte , Serialchar As Byte
 Dim Comminput As String * 9 , Com_value As Word
 Dim Com_com As String * 1 , Com_nr As String * 1
 Dim Led As Byte , Com_stat As String * 4 , Status As Byte
 Dim Value As Word , Values As String * 4 , Id As Byte , Ids As String * 2
+
+Dim Crc As Byte
+Dim Verinfo As String * 20
 
 Config Adc = Single , Prescaler = Auto , Reference = Avcc
 Start Adc
@@ -44,10 +49,10 @@ Led_act Alias Portd.4
 If Stored_id >= Min_id And Stored_id <= Max_id Then Id = Stored_id Else Id = Min_id
 
 Ids = Hex(id)                                               'module id number
-Const Status_serial = "006A"                                'serial number
-Const Status_verboot = "0064"                               'status version bootloader
-Const Status_verfirm = "00C8"                               'status version firmware
-Const Status_verprot = "00C8"                               'status version protocol
+Const Status_serial = "106"                                 'serial number
+Const Status_name = "ASIM"                                  'unit name
+Const Status_verboot = "1.0.0"                              'status version bootloader
+Const Status_verprot = "2.1.1"                              'status version protocol
 Const Status_dio = "0209"                                   'digital inputs, outputs
 Const Status_ai = "060A"                                    'analog inputs, bits
 Const Status_ao = "0000"                                    'analog outputs, bits
@@ -119,9 +124,9 @@ Case "0"                                                    'set digital output 
    If Portb.7 = 1 Then Set Value.7                          'digital output 8
    If Portd.2 = 1 Then Set Value.8                          'digital output 9
    Values = Hex(value)
-   Values = Format(values , "0000")
-   Send = Ids + ",o,0," + Values
-   Print Send
+   'Values = Format(values , "0000")
+   Send = Ids + ",o,0:" + Values
+   Gosub Serialsend
    'Goto Main
 
 End Select
@@ -136,57 +141,57 @@ Case "0"                                                    'get digital input s
    If Pind.5 = 0 Then Set Value.0                           'digital input 1
    If Pind.6 = 0 Then Set Value.1                           'digital input 2
    Values = Hex(value)
-   Values = Format(values , "0000")
-   Send = Ids + ",i,0," + Values
-   Print Send
+   'Values = Format(values , "0000")
+   Send = Ids + ",i,0:" + Values
+   Gosub Serialsend
    'Goto Main
 
 Case "1"                                                    'analog input 1
    Value = Getadc(0)
    Values = Hex(value)
-   Values = Format(values , "0000")
-   Send = Ids + ",i,1," + Values
-   Print Send
+   'Values = Format(values , "0000")
+   Send = Ids + ",i,1:" + Values
+   Gosub Serialsend
    'Goto Main
 
 Case "2"                                                    'analog input 2
    Value = Getadc(1)
    Values = Hex(value)
-   Values = Format(values , "0000")
-   Send = Ids + ",i,2," + Values
-   Print Send
+   'Values = Format(values , "0000")
+   Send = Ids + ",i,2:" + Values
+   Gosub Serialsend
    'Goto Main
 
 Case "3"                                                    'analog input 3
    Value = Getadc(2)
    Values = Hex(value)
-   Values = Format(values , "0000")
-   Send = Ids + ",i,3," + Values
-   Print Send
+   'Values = Format(values , "0000")
+   Send = Ids + ",i,3:" + Values
+   Gosub Serialsend
    'Goto Main
 
 Case "4"                                                    'analog input 4
    Value = Getadc(3)
    Values = Hex(value)
-   Values = Format(values , "0000")
-   Send = Ids + ",i,4," + Values
-   Print Send
+   'Values = Format(values , "0000")
+   Send = Ids + ",i,4:" + Values
+   Gosub Serialsend
    'Goto Main
 
 Case "5"                                                    'analog input 5
    Value = Getadc(4)
    Values = Hex(value)
-   Values = Format(values , "0000")
-   Send = Ids + ",i,5," + Values
-   Print Send
+   'Values = Format(values , "0000")
+   Send = Ids + ",i,5:" + Values
+   Gosub Serialsend
    'Goto Main
 
 Case "6"                                                    'analog input 6
    Value = Getadc(5)
    Values = Hex(value)
-   Values = Format(values , "0000")
-   Send = Ids + ",i,6," + Values
-   Print Send
+   'Values = Format(values , "0000")
+   Send = Ids + ",i,6:" + Values
+   Gosub Serialsend
    'Goto Main
 
 End Select
@@ -204,31 +209,39 @@ Case "0"                                                    'status byte
       If Com_value.2 = 1 Then Toggle Status.2               'manual fail
       End If
    Values = Hex(status)
-   Values = Format(values , "0000")
-   Send = Ids + ",s,0," + Values
-   Print Send
+   'Values = Format(values , "0000")
+   Send = Ids + ",s,0:" + Values
+   Gosub Serialsend
 
 Case "1"                                                    'serial number
-   Send = Ids + ",s,1," + Status_serial
-   Print Send
-Case "2"                                                    'bootloader version
-   Send = Ids + ",s,2," + Status_verboot
-   Print Send
+   Send = Ids + ",s,1:" + Status_serial
+   Gosub Serialsend
+Case "2"                                                    'unit name
+   Send = Ids + ",s,2:" + Status_name
+   Gosub Serialsend
 Case "3"                                                    'firmware version
-   Send = Ids + ",s,3," + Status_verfirm
-   Print Send
-Case "4"                                                    'protocol version
-   Send = Ids + ",s,4," + Status_verprot
-   Print Send
-Case "5"                                                    'digital I/Os
-   Send = Ids + ",s,5," + Status_dio
-   Print Send
-Case "6"                                                    'analog inputs & bits
-   Send = Ids + ",s,6," + Status_ai
-   Print Send
-Case "7"                                                    'analog outputs & bits
-   Send = Ids + ",s,7," + Status_ao
-   Print Send
+   Verinfo = Version(2)
+   Send = Ids + ",s,3:" + Verinfo
+   Gosub Serialsend
+Case "4"                                                    'compiled date
+   Verinfo = Version()
+   Send = Ids + ",s,4:" + Verinfo
+   Gosub Serialsend
+Case "5"                                                    'bootloader version
+   Send = Ids + ",s,5:" + Status_verboot
+   Gosub Serialsend
+Case "6"                                                    'protocol version
+   Send = Ids + ",s,6:" + Status_verprot
+   Gosub Serialsend
+Case "7"                                                    'digital I/Os
+   Send = Ids + ",s,7:" + Status_dio
+   Gosub Serialsend
+Case "8"                                                    'analog inputs & bits
+   Send = Ids + ",s,8:" + Status_ai
+   Gosub Serialsend
+Case "9"                                                    'analog outputs & bits
+   Send = Ids + ",s,9:" + Status_ao
+   Gosub Serialsend
 
 End Select
 Goto Main
@@ -238,8 +251,8 @@ If Com_com = "u" Then                                       'setup
 Select Case Com_nr
 
 Case "0"                                                    'reboot
-   Send = Ids + ",u,0,0001"
-   Print Send
+   Send = Ids + ",u,0:0001"
+   Gosub Serialsend
    Wait 1
 
 Case "1"                                                    'address
@@ -247,8 +260,8 @@ Case "1"                                                    'address
       Stored_id = Com_value
       Id = Stored_id
       End If
-   Send = Ids + ",u,1,00" + Hex(id)
-   Print Send
+   Send = Ids + ",u,1:00" + Hex(id)
+   Gosub Serialsend
    If Ids <> Hex(id) Then Wait 1                            'reboot if address change
 
 End Select
@@ -258,3 +271,8 @@ End If
 Goto Main
 End
 
+Serialsend:
+   Crc = Checksum(Send)
+   Print Send + "#" + Str(Crc)
+   Return
+End
